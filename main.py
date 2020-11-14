@@ -9,10 +9,10 @@ from tkinter.filedialog import askdirectory, askopenfilename
 # Window Management
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (screen_width//2-WIDTH//2, screen_height//2-HEIGHT//2)
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pixelator, By: Arjun Sahlot")
+pygame.display.set_caption("Pixelator")
 
 
-def draw_window(win, width, height, image, open_button, pixel_button, save_button):
+def draw_window(win, width, height, image, open_button, pixel_button, save_button, events):
     win.fill(WHITE)
     win.fill(GREY, (950, 0, 550, HEIGHT))
     file_name = image.path.split("/")
@@ -21,9 +21,9 @@ def draw_window(win, width, height, image, open_button, pixel_button, save_butto
     file_name = file_name[-1]
     text = FONT.render(file_name if file_name != "starter_image.png" else "None", 1, BLACK if file_name != "starter_image.png" else RED)
     win.blit(text, (1250 - text.get_width()//2, 25))
-    open_button.Draw(win)
-    pixel_button.Draw(win)
-    save_button.Draw(win)
+    open_button.Draw(win, events)
+    pixel_button.Draw(win, events)
+    save_button.Draw(win, events)
 
 
 def main(win, width, height):
@@ -32,13 +32,12 @@ def main(win, width, height):
     open_button = pg.ButtonText((1250 - 100, 100), (200, 60), (0, 255, 0), (0, 200, 0), (0, 255, 0), FONT.render("Open", 1, BLACK), (0, 0), 5, BLACK)
     pixel_button = pg.ButtonText((1250 - 125, 200), (250, 80), (0, 255, 0), (0, 200, 0), (0, 255, 0), B_FONT.render("Pixelate", 1, BLACK), (0, 0), 5, BLACK)
     save_button = pg.ButtonText((1250 - 100, 320), (200, 60), (0, 255, 0), (0, 200, 0), (0, 255, 0), FONT.render("Save", 1, BLACK), (0, 0), 5, BLACK)
-    resolution_text = pg.TextInput((1250 - 100, 650), (200, 50), initialText="Resolution")
-    typing = False
+    resolution_text = pg.TextInput((1250 - 100, 650), (200, 50), WHITE, label="Resolution")
     run = True
     while run:
         clock.tick(FPS)
-        draw_window(win, width, height, image, open_button, pixel_button, save_button)
         events = pygame.event.get()
+        draw_window(win, width, height, image, open_button, pixel_button, save_button, events)
         image.update(win, events)
         if open_button.clicked:
             image.change_image(askopenfilename())
@@ -56,16 +55,7 @@ def main(win, width, height):
             if event.type == pygame.QUIT:
                 run = False
                 # exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if resolution_text.rect.collidepoint(event.pos):
-                    if resolution_text.text == "Resolution":
-                        resolution_text.ClearText()
-                else:
-                    if resolution_text.text == "":
-                        resolution_text.input_string = "Resolution"
-
-        resolution_text.Update(events)
-        resolution_text.Draw(win)
+        resolution_text.Draw(win, events)
 
         pygame.display.update()
 
