@@ -19,7 +19,7 @@
 
 import pygame
 import os
-from Pixelator.constants import *
+from constants import *
 
 
 class Image:
