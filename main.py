@@ -19,8 +19,8 @@
 
 import pygame
 import os
-from Pixelator.constants import *
-from Pixelator.classes import Image
+from constants import *
+from classes import Image
 from pumpkinpy.pygameutils import elements as pg
 from tkinter.filedialog import askdirectory, askopenfilename
 
