@@ -23,23 +23,35 @@ from constants import *
 from classes import Image
 from pumpkinpy.pygameutils import elements as pg
 from tkinter.filedialog import askdirectory, askopenfilename
+import vidmaker
+
+vid = vidmaker.Video("/home/arjun/Downloads/pixelator.mp4")
 
 
 # Window Management
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (screen_width//2-WIDTH//2, screen_height//2-HEIGHT//2)
+os.environ["SDL_VIDEO_WINDOW_POS"] = "%d,%d" % (
+    screen_width // 2 - WIDTH // 2,
+    screen_height // 2 - HEIGHT // 2,
+)
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pixelator")
 
 
-def draw_window(win, width, height, image, open_button, pixel_button, save_button, events):
+def draw_window(
+    win, width, height, image, open_button, pixel_button, save_button, events
+):
     win.fill(WHITE)
     win.fill(GREY, (950, 0, 550, HEIGHT))
     file_name = image.path.split("/")
     if len(file_name) == 1:
         file_name = "".join(file_name).split("\\")
     file_name = file_name[-1]
-    text = FONT.render(file_name if file_name != "starter_image.png" else "None", 1, BLACK if file_name != "starter_image.png" else RED)
-    win.blit(text, (1250 - text.get_width()//2, 25))
+    text = FONT.render(
+        file_name if file_name != "starter_image.png" else "None",
+        1,
+        BLACK if file_name != "starter_image.png" else RED,
+    )
+    win.blit(text, (1250 - text.get_width() // 2, 25))
     open_button.Draw(win, events)
     pixel_button.Draw(win, events)
     save_button.Draw(win, events)
@@ -48,15 +60,49 @@ def draw_window(win, width, height, image, open_button, pixel_button, save_butto
 def main(win, width, height):
     clock = pygame.time.Clock()
     image = Image(os.path.join("assets", "starter_image.png"), 50, 50)
-    open_button = pg.ButtonText((1250 - 100, 100), (200, 60), (0, 255, 0), (0, 200, 0), (0, 255, 0), FONT.render("Open", 1, BLACK), (0, 0), 5, BLACK)
-    pixel_button = pg.ButtonText((1250 - 125, 200), (250, 80), (0, 255, 0), (0, 200, 0), (0, 255, 0), B_FONT.render("Pixelate", 1, BLACK), (0, 0), 5, BLACK)
-    save_button = pg.ButtonText((1250 - 100, 320), (200, 60), (0, 255, 0), (0, 200, 0), (0, 255, 0), FONT.render("Save", 1, BLACK), (0, 0), 5, BLACK)
-    resolution_text = pg.TextInput((1250 - 100, 650), (200, 50), WHITE, label="Resolution")
+    open_button = pg.ButtonText(
+        (1250 - 100, 100),
+        (200, 60),
+        (0, 255, 0),
+        (0, 200, 0),
+        (0, 255, 0),
+        FONT.render("Open", 1, BLACK),
+        (0, 0),
+        5,
+        BLACK,
+    )
+    pixel_button = pg.ButtonText(
+        (1250 - 125, 200),
+        (250, 80),
+        (0, 255, 0),
+        (0, 200, 0),
+        (0, 255, 0),
+        B_FONT.render("Pixelate", 1, BLACK),
+        (0, 0),
+        5,
+        BLACK,
+    )
+    save_button = pg.ButtonText(
+        (1250 - 100, 320),
+        (200, 60),
+        (0, 255, 0),
+        (0, 200, 0),
+        (0, 255, 0),
+        FONT.render("Save", 1, BLACK),
+        (0, 0),
+        5,
+        BLACK,
+    )
+    resolution_text = pg.TextInput(
+        (1250 - 100, 650), (200, 50), WHITE, label="Resolution"
+    )
     run = True
     while run:
         clock.tick(FPS)
         events = pygame.event.get()
-        draw_window(win, width, height, image, open_button, pixel_button, save_button, events)
+        draw_window(
+            win, width, height, image, open_button, pixel_button, save_button, events
+        )
         image.update(win, events)
         if open_button.clicked:
             image.change_image(askopenfilename())
@@ -77,6 +123,8 @@ def main(win, width, height):
         resolution_text.Draw(win, events)
 
         pygame.display.update()
+        vid.update(pygame.surfarray.pixels3d(win).swapaxes(0, 1))
 
 
 main(WINDOW, WIDTH, HEIGHT)
+vid.export(True)
